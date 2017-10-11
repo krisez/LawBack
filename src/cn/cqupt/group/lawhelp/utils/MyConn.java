@@ -16,7 +16,7 @@ public class MyConn {
     static{
         Properties p = new Properties();
         try {
-            p.load(new FileInputStream("db.properties"));
+            p.load(MyConn.class.getClassLoader().getResourceAsStream("db.properties"));
             driverClass = p.getProperty("driverClass");
             url = p.getProperty("url");
             user = p.getProperty("user");
@@ -39,7 +39,7 @@ public class MyConn {
 
     }
     /**
-     * @param args
+     * 测试
      */
 	/*public static void main(String[] args){
 		//String sql = "insert into Emp values('1','ly','1','88');";
