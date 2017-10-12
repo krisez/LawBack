@@ -1,6 +1,8 @@
 package cn.cqupt.group.lawhelp.dao;
 
+import cn.cqupt.group.lawhelp.entity.UStatus;
 import cn.cqupt.group.lawhelp.entity.User;
+import cn.cqupt.group.lawhelp.entity.UserInfo;
 import cn.cqupt.group.lawhelp.utils.MyConn;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -31,13 +33,67 @@ public class UserDao {
             if(lists.size() == 0){
                 return null;
             }else{
-                String s= JSONArray.toJSONString(lists);
+                String s= JSON.toJSONString(lists);
                 return s;
             }
 
         }catch(Exception e){
             e.printStackTrace();
         }finally{
+            MyConn.close(connection);
+        }
+        return null;
+    }
+
+    public static String isPass(String user,String password){
+        Connection connection = null;
+        String sql = "select * from users where USER ="+user + ";";
+        try{
+            connection = MyConn.getConnection();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            if(rs.next()){
+                UStatus status = new UStatus();
+                if(password.equals(rs.getString("password"))){
+                    status.setStatus("1");
+                    status.setMessage("");
+                    status.setData(getInfo(user));
+                    String s = JSON.toJSONString(status);
+                    return s;
+                }
+                else  status.setStatus("0");
+                status.setMessage("密码or账户错误");
+                status.setData(null);
+                String s = JSON.toJSONString(status);
+                return s;
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            MyConn.close(connection);
+        }
+        return null;
+    }
+
+    public static UserInfo getInfo(String user){
+        Connection connection = null;
+        String sql = "SELECT * from userinfo;";
+        try {
+            connection = MyConn.getConnection();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            if(rs.next()){
+                UserInfo info = new UserInfo(
+                        rs.getString("id"),
+                        rs.getString("nickname"),
+                        rs.getString("headUrl"),
+                        rs.getString("sex")
+                );
+                return info;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
             MyConn.close(connection);
         }
         return null;
