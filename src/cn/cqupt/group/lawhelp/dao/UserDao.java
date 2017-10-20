@@ -98,4 +98,8 @@ public class UserDao {
         }
         return null;
     }
+
+    public static void registerUser(String user,String pass,String role){
+
+    }
 }

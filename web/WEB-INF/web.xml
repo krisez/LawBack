@@ -10,6 +10,6 @@
 
     <servlet-mapping>
         <servlet-name>BServlet</servlet-name>
-        <url-pattern>*.s</url-pattern>
+        <url-pattern>*.la</url-pattern>
     </servlet-mapping>
 </web-app>
