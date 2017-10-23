@@ -1,6 +1,7 @@
 package cn.cqupt.group.lawhelp.web;
 
 import cn.cqupt.group.lawhelp.dao.UserDao;
+import cn.cqupt.group.lawhelp.entity.User;
 import cn.cqupt.group.lawhelp.entity.UserInfo;
 
 import javax.servlet.ServletException;
@@ -20,14 +21,16 @@ public class MServlet extends HttpServlet {
         //获取用户请求路径
         String uri = request.getRequestURI();
         String action = uri.substring(uri.lastIndexOf("/"), uri.lastIndexOf("."));
-        if("/login".equals(action)){
+        if ("/login".equals(action)) {
             login(request, response);
-        }else if("register".equals(action)){
-            register(request,response);
+        } else if ("/register".equals(action)) {
+            register(request, response);
+        } else if ("/getuser".equals(action)) {
+            getUser(request, response);
         }
     }
 
-    private void register(HttpServletRequest request, HttpServletResponse response) throws IOException{
+    private void register(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String user = request.getParameter("u");
         String password = request.getParameter("p");
 
@@ -36,9 +39,18 @@ public class MServlet extends HttpServlet {
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String user = request.getParameter("u");
         String password = request.getParameter("p");
-        String result = UserDao.isPass(user,password);
-        response.setCharacterEncoding("GBK");
-        if(result!=null)
-        response.getWriter().write(result);
+        String result = UserDao.isPass(user, password);
+        response.setCharacterEncoding("UTF-8");
+        if (result != null)
+            response.getWriter().write(result);
+    }
+
+    private void getUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String user = request.getParameter("u");
+        String password = request.getParameter("p");
+        String s = UserDao.getUser(user, password);
+        response.setCharacterEncoding("UTF-8");
+        if (s != null)
+            response.getWriter().write(s);
     }
 }

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDao {
+
     public static String queryUsers(){
         List<User> lists = new ArrayList<User>();
         Connection connection = null;
@@ -68,6 +69,32 @@ public class UserDao {
                 return s;
             }
         }catch(Exception e){
+            e.printStackTrace();
+        }finally{
+            MyConn.close(connection);
+        }
+        return null;
+    }
+
+    public static String getUser(String user,String pw){
+        Connection connection = null;
+        String sql = "select * from users where user = "+user ;
+        try {
+            connection = MyConn.getConnection();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(sql);
+            if(rs.next()){
+                User u = new User();
+                if(pw.equals(rs.getString("password"))){
+                    u.setUser(user);
+                    u.setPassword(pw);
+                    u.setRole(rs.getString("role"));
+                    u.setLogindevice(rs.getString("logindevice"));
+                    String s = JSON.toJSONString(u);
+                    return s;
+                }
+            }
+        }catch (Exception e){
             e.printStackTrace();
         }finally{
             MyConn.close(connection);

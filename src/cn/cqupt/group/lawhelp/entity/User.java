@@ -8,6 +8,9 @@ public class User{
     private String role;
     private String logindevice;
 
+    public User() {
+    }
+
     public User(String user, String password, String role, String logindevice) {
         this.user = user;
         this.password = password;
