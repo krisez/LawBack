@@ -5,15 +5,17 @@ public class UserInfo {
     private String headImgUrl;
     private String nickname;
     private String sex;
+    private String role;
 
     public UserInfo() {
     }
 
-    public UserInfo(String id, String nickname, String headImgUrl, String sex) {
+    public UserInfo(String id, String nickname, String headImgUrl, String sex, String role) {
         this.id = id;
         this.headImgUrl = headImgUrl;
         this.nickname = nickname;
         this.sex = sex;
+        this.role = role;
     }
 
     public String getId() {
@@ -46,5 +48,13 @@ public class UserInfo {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }

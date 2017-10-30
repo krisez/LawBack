@@ -25,15 +25,17 @@ public class MServlet extends HttpServlet {
             login(request, response);
         } else if ("/register".equals(action)) {
             register(request, response);
-        } else if ("/getuser".equals(action)) {
-            getUser(request, response);
-        }
+        } 
     }
 
     private void register(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String user = request.getParameter("u");
         String password = request.getParameter("p");
-
+        String role = request.getParameter("r");
+        String result = UserDao.registerUser(user,password,role);
+        response.setCharacterEncoding("UTF-8");
+        if (result != null)
+            response.getWriter().write(result);
     }
 
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -43,14 +45,5 @@ public class MServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         if (result != null)
             response.getWriter().write(result);
-    }
-
-    private void getUser(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String user = request.getParameter("u");
-        String password = request.getParameter("p");
-        String s = UserDao.getUser(user, password);
-        response.setCharacterEncoding("UTF-8");
-        if (s != null)
-            response.getWriter().write(s);
     }
 }

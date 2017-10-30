@@ -1,6 +1,10 @@
 package cn.cqupt.group.lawhelp.entity;
 
 public class UStatus {
+    /**data 1 ----  成功登陆
+     *      2  ----  失败数据
+     *      3  ----  注册成功
+     */
     private String status;
     private String message;
     private UserInfo data;
