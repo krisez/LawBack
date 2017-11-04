@@ -15,9 +15,6 @@ import java.io.*;
 import java.util.List;
 
 public class MServlet extends HttpServlet {
-    private static int idUser = 1;
-    private static final long serialVersionUID = 1L;
-    private String path;
 
     @Override
     protected void service(HttpServletRequest request, HttpServletResponse response)
@@ -39,10 +36,10 @@ public class MServlet extends HttpServlet {
     //保存图片
     private void savefile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("utf-8");
+        response.setCharacterEncoding("utf-8");
         DiskFileItemFactory factory = new DiskFileItemFactory();// 获得磁盘文件条目工厂
         // 获取服务器下的工程文件中image文件夹的路径
         String path = request.getSession().getServletContext().getRealPath("/") + "upload";
-        System.out.println("文件保存路径：" + path);
         /**
          * 如果没以下两行设置的话，上传大的 文件 会占用 很多内存， 设置暂时存放的 存储室 , 这个存储室，可以和 最终存储文件 的目录不同 原理
          * 它是先存到 暂时存储室，然后在真正写到 对应目录的硬盘上， 按理来说 当上传一个文件时，其实是上传了两份，第一个是以 .tem 格式的
@@ -77,29 +74,17 @@ public class MServlet extends HttpServlet {
                     String value = item.getName();
                     // 索引到最后一个反斜杠
                     int start = value.lastIndexOf("/");
-                    // 截取上传文件的 字符串名字，加1是去掉反斜杠，
+                    // 截取上传文件的 字符串名字，加1是去掉反斜杠，或者获取到filename的名字
                     String filename = value.substring(start + 1);
-                    request.setAttribute(name, filename);
+                    //response.getWriter().write("\n获取上传文件的总共的容量：" + item.getSize() + "文件名为：" + path + "/" + filename);
                     // 真正写到磁盘上
-                    OutputStream out = new FileOutputStream(new File(path,
-                            filename));
-                    InputStream in = item.getInputStream();
-                    int length = 0;
-                    byte[] buf = new byte[1024];
-                    System.out.println("获取上传文件的总共的容量：" + item.getSize() + "文件名为：" + path + "/" + filename);
-                    response.getWriter().write("获取上传文件的总共的容量：" + item.getSize() + "文件名为：" + path + "/" + filename);
-                    //向数据库中写入文件路径
-
-
-                    //把文件名写到数据库中。
-                    //<span style="font-family: Arial, Helvetica, sans-serif;">              </span>
-                    // in.read(buf) 每次读到的数据存放在 buf 数组中
-                    while ((length = in.read(buf)) != -1) {
-                        // 在 buf 数组中 取出数据 写到 （输出流）磁盘上
-                        out.write(buf, 0, length);
-                    }
-                    in.close();
-                    out.close();
+                    File file = new File(path,filename);
+                    item.write(file);
+                    int a = path.lastIndexOf("upload");
+                    path = path.substring(a);
+                    String s = "http://law.krisez.cn/" + path + "/" + filename;
+                    UserDao.updateHead(filename.substring(0,filename.lastIndexOf("_")),s);
+                    //response.getWriter().write(path + filename);
                 }
             }
 
@@ -132,77 +117,6 @@ public class MServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         if (result != null)
             response.getWriter().write(result);
-    }
-
-    // 流转化成字符串
-    public static String inputStream2String(InputStream is) throws IOException {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int i = -1;
-        while ((i = is.read()) != -1) {
-            baos.write(i);
-        }
-        return baos.toString();
-    }
-
-    // 流转化成文件
-    public static void inputStream2File(InputStream is, String savePath) throws Exception {
-        System.out.println("文件保存路径为:" + savePath);
-        File file = new File(savePath);
-        InputStream inputSteam = is;
-        BufferedInputStream fis = new BufferedInputStream(inputSteam);
-        FileOutputStream fos = new FileOutputStream(file);
-        int f;
-        while ((f = fis.read()) != -1) {
-            fos.write(f);
-        }
-        fos.flush();
-        fos.close();
-        fis.close();
-        inputSteam.close();
-
-    }
-
-    public void saveheadd(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        req.setCharacterEncoding("utf-8");
-        resp.setContentType("text/html;charset=utf-8");
-//为解析类提供配置信息
-        DiskFileItemFactory factory = new DiskFileItemFactory();
-//创建解析类的实例
-        ServletFileUpload sfu = new ServletFileUpload(factory);
-//开始解析
-        sfu.setFileSizeMax(1024 * 1024 * 5);
-//每个表单域中数据会封装到一个对应的FileItem对象上
-        try {
-            List<FileItem> items = sfu.parseRequest(req);
-//区分表单域
-            for (int i = 0; i < items.size(); i++) {
-                FileItem item = items.get(i);
-//isFormField为true，表示这不是文件上传表单域
-                if (!item.isFormField()) {
-                    ServletContext sctx = getServletContext();
-//获得存放文件的物理路径
-//upload下的某个文件夹 得到当前在线的用户 找到对应的文件夹
-
-                    String path = sctx.getRealPath("/upload");
-                    System.out.println(path);
-//获得文件名
-                    String fileName = item.getName();
-                    System.out.println(fileName);
-//该方法在某些平台(操作系统),会返回路径+文件名
-                    fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
-                    File file = new File(path + "\\" + fileName);
-                    if (!file.exists()) {
-                        item.write(file);
-//将上传图片的名字记录到数据库中
-
-                        resp.sendRedirect("/upload/ok.html");
-                    }
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }
 

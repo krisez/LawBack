@@ -133,7 +133,7 @@ public class UserDao {
         sb.append(user).append("','")
                 .append(Time.getTime()).append("','")
                 .append("LAW").append("','")
-                .append("").append("','")
+                .append("http://law.krisez.cn/upload/init.jpg").append("','")
                 .append("m").append("','")
                 .append(role).append("')");
         String sql = sb.toString();
@@ -148,5 +148,19 @@ public class UserDao {
             MyConn.close(connection);
         }
         return null;
+    }
+
+    public static void updateHead(String id,String url){
+        Connection connection = null;
+        String sql = "update userinfo set headUrl='" + url + "' where id='" + id + "'";
+        try {
+            connection = MyConn.getConnection();
+            Statement st = connection.createStatement();
+            st.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConn.close(connection);
+        }
     }
 }

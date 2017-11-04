@@ -17,7 +17,7 @@
     <title>后台管理</title>
 </head>
 <body align="center">
-    <h1><a href="pc/#">后台管理端</a></h1>
+    <h1><a href="upload.html">后台管理端</a></h1>
 </body>
 </html>
 
