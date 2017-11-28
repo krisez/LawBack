@@ -50,6 +50,7 @@ public class UserDao {
     public static String isPass(String user, String password) {
         Connection connection = null;
         String sql = "select * from users where USER =" + user + ";";
+        System.out.println(sql);
         try {
             connection = MyConn.getConnection();
             Statement st = connection.createStatement();
@@ -113,6 +114,7 @@ public class UserDao {
                 .append(role).append("','")
                 .append("')");
         String sql = sb.toString();
+        System.out.println(sql);
         try {
             connection = MyConn.getConnection();
             Statement st = connection.createStatement();
@@ -162,5 +164,9 @@ public class UserDao {
         } finally {
             MyConn.close(connection);
         }
+    }
+
+    public static void addRules(String category,String content){
+
     }
 }
