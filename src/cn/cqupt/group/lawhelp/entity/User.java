@@ -4,16 +4,14 @@ import java.io.Serializable;
 
 public class User{
     private String user;
-    private String password;
     private String role;
     private String logindevice;
 
     public User() {
     }
 
-    public User(String user, String password, String role, String logindevice) {
+    public User(String user,String role, String logindevice) {
         this.user = user;
-        this.password = password;
         this.role = role;
         this.logindevice = logindevice;
     }
@@ -24,14 +22,6 @@ public class User{
 
     public void setUser(String user) {
         this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getRole() {

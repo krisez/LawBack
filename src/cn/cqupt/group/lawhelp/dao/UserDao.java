@@ -24,10 +24,8 @@ public class UserDao {
             connection = MyConn.getConnection();
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery(sql);
-            User user = null;
             while (rs.next()) {
                 lists.add(new User(rs.getString("user"),
-                        rs.getString("password"),
                         rs.getString("role"),
                         rs.getString("logindevice")
                 ));
@@ -47,9 +45,22 @@ public class UserDao {
         return null;
     }
 
-    public static String isPass(String user, String password) {
+    public static boolean query(String u){
+        String s = queryUsers();
+        List<User> users = JSONArray.parseArray(s,User.class);
+        if(users!=null){
+            for(User user:users){
+                if(u.equals(user.getUser())){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static String login(String user) {
         Connection connection = null;
-        String sql = "select * from users where USER =" + user + ";";
+        String sql = "select * from users where USER ='" + user + "';";
         System.out.println(sql);
         try {
             connection = MyConn.getConnection();
@@ -57,15 +68,9 @@ public class UserDao {
             ResultSet rs = st.executeQuery(sql);
             if (rs.next()) {
                 UStatus status = new UStatus();
-                if (password.equals(rs.getString("password"))) {
-                    status.setStatus("1");
-                    status.setMessage("");
-                    status.setData(getInfo(user));
-                    String s = JSON.toJSONString(status);
-                    return s;
-                } else status.setStatus("0");
-                status.setMessage("密码or账户错误");
-                status.setData(null);
+                status.setStatus("1");
+                status.setMessage("登陆成功");
+                status.setData(getInfo(user));
                 String s = JSON.toJSONString(status);
                 return s;
             }
@@ -79,7 +84,7 @@ public class UserDao {
 
     public static UserInfo getInfo(String user) {
         Connection connection = null;
-        String sql = "SELECT * from userinfo where USER =" + user + ";";
+        String sql = "SELECT * from userinfo where USER ='" + user + "';";
         try {
             connection = MyConn.getConnection();
             Statement st = connection.createStatement();
@@ -106,11 +111,10 @@ public class UserDao {
         return null;
     }
 
-    public static String registerUser(String user, String pass, String role) {
+    public static String registerUser(String user,String role) {
         Connection connection = null;
         StringBuffer sb = new StringBuffer("INSERT into users VALUES ('");
         sb.append(user).append("','")
-                .append(pass).append("','")
                 .append(role).append("','")
                 .append("')");
         String sql = sb.toString();
@@ -134,7 +138,7 @@ public class UserDao {
         StringBuffer sb = new StringBuffer("INSERT into userinfo VALUES ('");
         sb.append(user).append("','")
                 .append(Time.getTime()).append("','")
-                .append("LAW").append("','")
+                .append("茶花").append("','")
                 .append("http://law.krisez.cn/upload/init.jpg").append("','")
                 .append("m").append("','")
                 .append(role).append("')");
@@ -152,7 +156,7 @@ public class UserDao {
         return null;
     }
 
-    public static void updateHead(String id,String url){
+    public static void updateHead(String id, String url) {
         Connection connection = null;
         String sql = "update userinfo set headUrl='" + url + "' where id='" + id + "'";
         try {
@@ -166,7 +170,7 @@ public class UserDao {
         }
     }
 
-    public static void addRules(String category,String content){
+    public static void addRules(String category, String content) {
 
     }
 }

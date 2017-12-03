@@ -25,18 +25,31 @@ public class MServlet extends HttpServlet {
         String uri = request.getRequestURI();
         String action = uri.substring(uri.lastIndexOf("/"), uri.lastIndexOf("."));
         if ("/login".equals(action)) {
+            response.setHeader("Content-type", "text/html;charset=UTF-8");
             login(request, response);
-        } else if ("/register".equals(action)) {
-            register(request, response);
-        } else if ("/savehead".equals(action)) {
+        }else if ("/savehead".equals(action)) {
             savefile(request, response);
         }
+    }
+    //登录
+    private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String user = request.getParameter("u");
+        String result = "";
+        //true注册，false登陆
+        if(UserDao.query(user)){
+            result = UserDao.registerUser(user,"1");
+        }
+        else result = UserDao.login(user);
+        response.setCharacterEncoding("UTF-8");
+        if (result != null)
+            response.getWriter().write(result);
     }
 
     //保存图片
     private void savefile(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("utf-8");
         response.setCharacterEncoding("utf-8");
+
         DiskFileItemFactory factory = new DiskFileItemFactory();// 获得磁盘文件条目工厂
         // 获取服务器下的工程文件中image文件夹的路径
         String path = request.getSession().getServletContext().getRealPath("/") + "upload";
@@ -95,30 +108,6 @@ public class MServlet extends HttpServlet {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-    }
-
-
-    //注册
-    private void register(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String user = request.getParameter("u");
-        System.out.println(user);
-        String password = request.getParameter("p");
-        String role = request.getParameter("r");
-        String result = UserDao.registerUser(user, password, role);
-        response.setHeader("Content-type", "text/html;charset=UTF-8");
-        response.setCharacterEncoding("UTF-8");
-        if (result != null)
-            response.getWriter().write(result);
-    }
-
-    //登录
-    private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String user = request.getParameter("u");
-        String password = request.getParameter("p");
-        String result = UserDao.isPass(user, password);
-        response.setCharacterEncoding("UTF-8");
-        if (result != null)
-            response.getWriter().write(result);
     }
 
 }
