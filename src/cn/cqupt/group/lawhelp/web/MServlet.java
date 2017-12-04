@@ -1,6 +1,9 @@
 package cn.cqupt.group.lawhelp.web;
 
 import cn.cqupt.group.lawhelp.dao.UserDao;
+import cn.cqupt.group.lawhelp.entity.Cas;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -27,19 +30,39 @@ public class MServlet extends HttpServlet {
         if ("/login".equals(action)) {
             response.setHeader("Content-type", "text/html;charset=UTF-8");
             login(request, response);
-        }else if ("/savehead".equals(action)) {
+        } else if ("/savehead".equals(action)) {
             savefile(request, response);
+        }else if("/dynamics".equals(action)){
+            response.setHeader("Content-type", "text/html;charset=UTF-8");
+            dynamics(request,response);
+        }else if("/lookDynamics".equals(action)){
+            response.setHeader("Content-type", "text/html;charset=UTF-8");
+            queryDynamics(request,response);
         }
     }
+
+    private void queryDynamics(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String j = UserDao.getDynamics();
+        response.getWriter().write(j);
+    }
+
+    private void dynamics(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String json = request.getParameter("json");
+        System.out.println(json);
+        Cas c = JSON.parseObject(json,Cas.class);
+        String s = UserDao.addDynamics(c);
+        if(response!=null)
+            response.getWriter().write(s);
+    }
+
     //登录
     private void login(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String user = request.getParameter("u");
         String result = "";
         //true注册，false登陆
-        if(UserDao.query(user)){
-            result = UserDao.registerUser(user,"1");
-        }
-        else result = UserDao.login(user);
+        if (UserDao.query(user)) {
+            result = UserDao.registerUser(user, "1");
+        } else result = UserDao.login(user);
         response.setCharacterEncoding("UTF-8");
         if (result != null)
             response.getWriter().write(result);
@@ -91,13 +114,13 @@ public class MServlet extends HttpServlet {
                     String filename = value.substring(start + 1);
                     //response.getWriter().write("\n获取上传文件的总共的容量：" + item.getSize() + "文件名为：" + path + "/" + filename);
                     // 真正写到磁盘上
-                    File file = new File(path,filename);
+                    File file = new File(path, filename);
                     item.write(file);
                     int a = path.lastIndexOf("upload");
                     path = path.substring(a);
                     String s = "http://law.krisez.cn/" + path + "/" + filename;
-                    UserDao.updateHead(filename.substring(0,filename.lastIndexOf("_")),s);
-                    //response.getWriter().write(path + filename);
+                    UserDao.updateHead(filename.substring(0, filename.lastIndexOf("_")), s);
+                    response.getWriter().write(s);
                 }
             }
 
