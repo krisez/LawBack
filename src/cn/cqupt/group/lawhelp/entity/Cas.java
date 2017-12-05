@@ -16,13 +16,14 @@ public class Cas implements Serializable {
     private String count;//评论数
     private String time;
 
-    public Cas(String id,String title, String content,  String category, String count, String time) {
+    public Cas(String id,String author,String title, String content,  String category, String count, String time) {
         this.category = category;
         this.content = content;
         this.title = title;
         this.id = id;
         this.count = count;
         this.time = time;
+        this.author = author;
     }
 
     public String getAuthor() {
@@ -79,5 +80,18 @@ public class Cas implements Serializable {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    @Override
+    public String toString() {
+        return "Cas{" +
+                "author='" + author + '\'' +
+                ", category='" + category + '\'' +
+                ", content='" + content + '\'' +
+                ", title='" + title + '\'' +
+                ", id='" + id + '\'' +
+                ", count='" + count + '\'' +
+                ", time='" + time + '\'' +
+                '}';
     }
 }

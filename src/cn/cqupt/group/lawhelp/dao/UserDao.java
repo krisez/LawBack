@@ -159,19 +159,12 @@ public class UserDao {
     public static void updateHead(String id, String url) {
         Connection connection = null;
         String sql = "update userinfo set headUrl='" + url + "' where id='" + id + "'";
-        try {
-            connection = MyConn.getConnection();
-            Statement st = connection.createStatement();
-            st.executeUpdate(sql);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MyConn.close(connection);
-        }
+        update(connection,sql);
     }
 
     public static String addDynamics(Cas c) {
         Connection connection = null;
+        System.out.println(c.toString());
         StringBuffer sb = new StringBuffer("INSERT into dynamics VALUES ('");
         sb.append(c.getId()).append("','")
                 .append(c.getAuthor()).append("','")
@@ -202,13 +195,13 @@ public class UserDao {
             ResultSet rs = st.executeQuery(sql);
             while (rs.next()) {
                 Cas c = new Cas(rs.getString("id"),
+                        rs.getString("author"),
                         rs.getString("title"),
                         rs.getString("content"),
                         rs.getString("category"),
                         rs.getString("count"),
                         rs.getString("time")
                         );
-                c.setAuthor(rs.getString("author"));
                 lists.add(c);
             }
             if (lists.size() == 0) {
@@ -224,5 +217,27 @@ public class UserDao {
             MyConn.close(connection);
         }
         return null;
+    }
+
+    public static String changeInfo(String id, String nickname, String sex) {
+        Connection connection = null;
+        //UPDATE Person SET Address = 'Zhongshan 23', City = 'Nanjing'
+        //WHERE LastName = 'Wilson'
+        String sql = "update userinfo SET nickname = '" + nickname
+                +"',sex = '" + sex + "' where id = '" + id + "'";
+        update(connection,sql);
+        return "ok";
+    }
+
+    private static void update(Connection connection,String sql){
+        try {
+            connection = MyConn.getConnection();
+            Statement st = connection.createStatement();
+            st.executeUpdate(sql);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MyConn.close(connection);
+        }
     }
 }

@@ -2,6 +2,7 @@ package cn.cqupt.group.lawhelp.web;
 
 import cn.cqupt.group.lawhelp.dao.UserDao;
 import cn.cqupt.group.lawhelp.entity.Cas;
+import cn.cqupt.group.lawhelp.entity.User;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.fileupload.FileItem;
@@ -38,7 +39,18 @@ public class MServlet extends HttpServlet {
         }else if("/lookDynamics".equals(action)){
             response.setHeader("Content-type", "text/html;charset=UTF-8");
             queryDynamics(request,response);
+        }else if("/changeInfo".equals(action)){
+            response.setHeader("Content-type", "text/html;charset=UTF-8");
+            changeInfo(request,response);
         }
+    }
+
+    private void changeInfo(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String id = request.getParameter("id");
+        String nickname = request.getParameter("nickname");
+        String sex = request.getParameter("sex");
+        String status = UserDao.changeInfo(id,nickname,sex);
+        response.getWriter().write(status);
     }
 
     private void queryDynamics(HttpServletRequest request, HttpServletResponse response) throws IOException {
